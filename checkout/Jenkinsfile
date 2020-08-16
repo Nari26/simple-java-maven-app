@@ -51,6 +51,8 @@ pipeline {
                     echo "Started - Build the Code\n\n"
                     echo "PATH = ${PATH}"
                     mvnHome = tool('M3')
+                    javaHome = tool('JDK')
+                    env.JAVA_HOME = tool name: JDK, type: 'hudson.model.JDK'
                     sh """
                     echo "${mvnHome}"
                     `${mvnHome}/bin/mvn -e clean install`
