@@ -1,6 +1,6 @@
 def checkoutDir = ""
 def gitCredsID = "aa0188c0-17e9-4c2e-be09-e26d466af075"
-def gitRepo = "https://github.com/Nari26/jenkins.git"
+def gitRepo = "https://github.com/Nari26/simple-java-maven-app.git"
 
 pipeline {
     agent any  
