@@ -1,0 +1,78 @@
+def checkoutDir = ""
+def gitCredsID = "aa0188c0-17e9-4c2e-be09-e26d466af075"
+def gitRepo = "https://github.com/Nari26/jenkins.git"
+
+pipeline {
+    agent any  
+    parameters {
+        string(name: 'checkoutBranch', defaultValue: 'develop', description: 'Branch for Code Build')
+    }
+    
+    stages{
+        stage('Pipeline Inputs'){
+            steps {
+                script {
+                    echo "Git Repo: $gitRepo"
+                }
+            }
+        }
+        stage('Code Checkout'){
+            steps {
+                script {
+                    echo "\n\nCode Checkout Start"
+                    echo "Cleanup Workspace"
+                    sh """
+                    rm -rf * 
+                    rm -rf .g*
+                    """
+                    git branch: checkoutBranch, credentialsId: gitCredsID, url: gitRepo
+                    workspace =pwd()
+                    echo "$workspace"
+                    sh """
+                    # Checkout the required branch and pull any new changes
+                    git checkout ${checkoutBranch}
+                    ls -lR
+                    """
+                    echo "The current folder is ${checkoutDir}"
+                    echo "Code Checkout End\n\n\n"
+                }
+            }
+        }
+        stage('Static Code Analysis'){
+            steps {
+                script {
+                    echo "Static Code Analysis"
+                }
+            }
+        }
+        stage('Build'){
+            steps {
+                script {
+                    echo "Started - Build the Code\n\n"
+                    echo "PATH = ${PATH}"
+                    mvnHome = tool('M3')
+                    sh """
+                    echo "${mvnHome}"
+                    `${mvnHome}/bin/mvn -e clean install`
+                    echo "End - Code build\n"
+                    """
+                    
+                }
+            }
+        }
+        stage('Unit Testing'){
+            steps {
+                script {
+                    echo "Unit Testing"
+                }
+            }
+        }
+        stage('Delivery'){
+            steps {
+                script {
+                    echo "Deliver the Code"
+                }
+            }
+        }
+    }    
+}
